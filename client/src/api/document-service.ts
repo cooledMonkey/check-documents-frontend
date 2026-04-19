@@ -39,18 +39,38 @@ export const documentService = {
     return response.data;
   },
 
-  /** Обновление времени доступа к документу */
-  updateLastAccess: async (documentId: string): Promise<UpdateLastAccessResponse> => {
-    const response = await apiClient.patch<UpdateLastAccessResponse>(
-      `/v1/documents/${documentId}/access`
-    );
-    return response.data;
-  },
-
   /** Получение верификационного отчёта */
   getVerificationReport: async (documentId: string): Promise<VerificationReportResponse> => {
     const response = await apiClient.get<VerificationReportResponse>(
       `/v1/documents/${documentId}/report`
+    );
+    return response.data;
+  },
+
+
+  /** Получение истории документов (с пагинацией) */
+    getDocumentHistory: async (params: {
+    page: number;
+    limit: number;
+    sortByDate?: 'date_asc' | 'date_desc';
+    filterByStatus?: 'pending' | 'Изменения не вносились' | 'Изменения внесены' | 'Некорректный файл';
+    search?: string;
+  }): Promise<DocumentHistoryResponse> => {
+    const response = await apiClient.get<DocumentHistoryResponse>('/v1/documents', {
+      params, // 👈 Axios автоматически превратит объект в ?page=1&limit=20&sortByDate=...
+    });
+    return response.data;
+  },
+
+  /** Получение уведомлений пользователя */
+  getNotifications: async (): Promise<NotificationResponse> => {
+    const response = await apiClient.get<NotificationResponse>('/v1/notifications');
+    return response.data;
+  },
+
+    updateLastAccess: async (documentId: string): Promise<UpdateLastAccessResponse> => {
+    const response = await apiClient.patch<UpdateLastAccessResponse>(
+      `/v1/documents/${documentId}/access`
     );
     return response.data;
   },
@@ -63,18 +83,9 @@ export const documentService = {
     return response.data;
   },
 
-  /** Получение истории документов (с пагинацией) */
-  getDocumentHistory: async (page = 1, limit = 20): Promise<DocumentHistoryResponse> => {
-    const response = await apiClient.get<DocumentHistoryResponse>('/v1/documents/history', {
-      params: { page, limit },
-    });
-    return response.data;
-  },
-
-  /** Получение уведомлений пользователя */
-  getNotifications: async (): Promise<NotificationResponse> => {
-    const response = await apiClient.get<NotificationResponse>('/v1/notifications');
-    return response.data;
+  /** Удаление документа */
+  deleteDocument: async (documentId: string): Promise<void> => {
+    await apiClient.delete(`/v1/documents/${documentId}`);
   },
 
 //   /** Получение профиля текущего пользователя */

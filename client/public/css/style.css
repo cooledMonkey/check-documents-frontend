@@ -254,6 +254,7 @@ body {
 .status-text {
   width: 205px;
   height: 26px;
+  font-size: 12sp;
 }
 
 .valid .status-bg {
@@ -477,6 +478,7 @@ body {
 .status-options {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+  margin-right: -5px;
 }
 
 .status-option {
@@ -484,6 +486,7 @@ body {
   flex-direction: column;
   align-items: center;
   text-align: center;
+  margin: 5px;
 }
 
 .status-checkbox {
@@ -823,5 +826,58 @@ body {
   
   .username {
     display: none;
+  }
+}
+
+/* Кнопки действий в строке истории */
+.action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.action-btn:hover:not(:disabled) {
+  background: rgba(117, 112, 174, 0.1);
+}
+
+.action-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.action-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Выравнивание элементов в строке */
+.history-file-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+}
+
+/* .history-file-item .file-name {
+  flex: 1;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+} */
+
+/* Адаптив для мобильных */
+@media (max-width: 600px) {
+  .history-file-item {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .history-file-item .file-name {
+    flex: 1 1 100%;
   }
 }

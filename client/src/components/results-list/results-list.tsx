@@ -16,8 +16,8 @@ function ResultsList(): JSX.Element {
   // 🟡 Пусто или проверка только началась
   if (uploadedDocuments.length === 0) {
     return (
-      <div className="results-empty">
-        <p>Результаты проверки появятся здесь</p>
+      <div className="file-list-bg">
+        <p className="file-name">Результаты проверки появятся здесь</p>
       </div>
     );
   }

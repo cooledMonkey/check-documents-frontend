@@ -20,7 +20,8 @@ export const mapBackendStatus = (report: VerificationReportResponse): FileStatus
   
   // ⚠️ Некорректный файл (ошибка формата, не XML, повреждён)
   if (
-    status.includes('недействительна') 
+    status.includes('недействительна') &&
+    !status.includes('истек/не наступил срок действия требуемого сертификата')
   ) {
     return FileStatus.Invalid;
   }
