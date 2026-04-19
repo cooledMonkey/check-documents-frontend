@@ -6,22 +6,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { NotFoundPage } from "../../pages/not-found-page/not-found-page";
 import { RegistrationPage } from "../../pages/registration-page/registration-page";
 import { ProtectedRoute } from "../protected-route/ProtectedRoute";
-
-// function App(){
-//     return(<BrowserRouter>
-//         <Routes>
-//             <Route path={AppRoute.Main} element={<MainPage />} ></Route>
-//             <Route path={AppRoute.History} element={<HistoryPage />} ></Route>
-//             <Route path={AppRoute.Login} element={<LoginPage />} ></Route>
-//             <Route path={AppRoute.Registration} element={<RegistrationPage />} ></Route>
-//             <Route path="*" element={<NotFoundPage/>} />
-//         </Routes>
-//     </BrowserRouter>
-//     )
-// }
-// export {App}
-
-
+import { ChangePasswordPage } from "../../pages/change-password-page/ChangePasswordPage";
 
 function App() {
   return (
@@ -43,6 +28,14 @@ function App() {
           element={
             <ProtectedRoute>
               <HistoryPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path={AppRoute.ChangePassword}
+          element={
+            <ProtectedRoute>
+              <ChangePasswordPage />
             </ProtectedRoute>
           } 
         />

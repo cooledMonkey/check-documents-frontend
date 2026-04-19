@@ -404,7 +404,7 @@ body {
 }
 
 .filters-title {
-  width: 125px;
+  /* width: 125px; */
   height: 35px;
   font-size: 24px;
   font-weight: 100;
@@ -455,13 +455,13 @@ body {
 }
 
 .filter-label {
-  width: 119px;
   height: 31px;
-  font-size: 20px;
+  font-size: 15px;
   text-align: left;
   color: #9d9d9d;
   display: flex;
   align-items: center;
+  padding-right: 15px;
 }
 
 .filter-input {
@@ -697,4 +697,131 @@ body {
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+.profile-nav-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+/* Кнопка Профиль в нав-баре */
+.profile-nav-btn {
+  display: flex;
+  align-items: center;
+  /* gap: 6px; */
+  cursor: pointer;
+  position: absolute;
+  top: -15px;
+  outline: none !important;
+  outline-offset: 0 !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
+  -webkit-tap-highlight-color: transparent;
+  justify-content: center;
+}
+
+.profile-nav-btn:focus-visible {
+  outline: 2px solid #7570AE;
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* .profile-nav-btn .dropdown-arrow {
+  transition: transform 0.2s;
+  margin-left: 4px;
+}
+
+.profile-nav-btn .dropdown-arrow.open {
+  transform: rotate(180deg);
+} */
+
+/* Выпадающее меню для нав-бара */
+.profile-dropdown.nav-dropdown {
+  position: absolute;
+  top: 30px;
+  left: 1248px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(117, 112, 174, 0.2);
+  min-width: 220px;
+  padding: 8px;
+  z-index: 1000;
+  animation: dropdownFade 0.15s ease-out;
+}
+
+/* Анимация появления */
+@keyframes dropdownFade {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Пункты меню */
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  /* color: #333; */
+  font-size: 14px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s, color 0.2s;
+}
+
+.dropdown-item:hover:not(:disabled) {
+  background: #f5f5f7;
+  color: #7570AE;
+}
+
+.dropdown-item:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.dropdown-item svg {
+  flex-shrink: 0;
+  color: #7570AE;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: #e0e0e0;
+  margin: 4px 8px;
+}
+
+/* Мини-спиннер */
+.spinner-mini {
+  width: 14px;
+  height: 14px;
+  border: 2px solid #e0e0e0;
+  border-top-color: #7570AE;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  margin-right: 6px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Адаптив */
+@media (max-width: 768px) {
+  .profile-dropdown.nav-dropdown {
+    right: -12px;
+    min-width: 200px;
+  }
+  
+  .username {
+    display: none;
+  }
 }

@@ -1,45 +1,62 @@
 import type { JSX } from "react";
 import { useState, useCallback, useRef } from "react";
-import { useDispatch } from 'react-redux';
-import { addFiles, setSelectedFiles } from "../../store/fileSlice";
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  addFiles,
+  setSelectedFiles,
+  clearFiles,
+  type FileMetadata
+} from "../../store/fileSlice";
+import { fileRegistry } from "../../utils/fileRegistry";
+import type { RootState } from "../../store";
 
 interface UploadFilesComponentProps {
   maxFiles?: number;
   accept?: string;
   maxSize?: number;
-  mode?: 'replace' | 'append'; // режим: заменить существующие или добавить
+  mode?: 'replace' | 'append';
 }
 
-function UploadFilesComponent({ 
-  maxFiles = 5, 
+function UploadFilesComponent({
+  maxFiles = 5,
   accept = ".xml",
-  maxSize = 10 * 1024 * 1024, // 10MB по умолчанию
-  mode = 'append' // по умолчанию заменяем
+  maxSize = 10 * 1024 * 1024,
+  mode = 'append'
 }: UploadFilesComponentProps): JSX.Element {
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
-  const dispatch = useDispatch();
-  //const selectedFiles = useSelector((state: RootState) => state.files.selectedFiles);
 
-  const validateFiles = (selectedFiles: File[]): File[] => {
+  const dispatch = useDispatch();
+  const selectedFilesMeta = useSelector((state: RootState) => state.files.selectedFiles) as FileMetadata[];
+  const isChecking = useSelector((state: RootState) => state.files.isChecking);
+
+  const generateFileId = (file: File): string => {
+    return `${file.name}-${file.size}-${file.lastModified}-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+  };
+
+  const extractMetadata = (file: File, id: string): FileMetadata => ({
+    id,
+    name: file.name,
+    size: file.size,
+    type: file.type,
+    lastModified: file.lastModified,
+  });
+
+  const validateFiles = (filesToValidate: File[]): File[] => {
     setError(null);
-    
-    if (selectedFiles.length > maxFiles) {
+    if (filesToValidate.length > maxFiles) {
       setError(`Максимальное количество файлов: ${maxFiles}`);
       return [];
     }
-
-    const oversizedFiles = selectedFiles.filter(file => file.size > maxSize);
+    const oversizedFiles = filesToValidate.filter(file => file.size > maxSize);
     if (oversizedFiles.length > 0) {
       setError(`Некоторые файлы превышают максимальный размер (${maxSize / 1024 / 1024}MB)`);
       return [];
     }
-
     if (accept !== "*") {
       const acceptedExtensions = accept.split(',').map(ext => ext.trim().toLowerCase());
-      const invalidFiles = selectedFiles.filter(file => {
+      const invalidFiles = filesToValidate.filter(file => {
         const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
         return !acceptedExtensions.some(ext => {
           if (ext === fileExtension) return true;
@@ -50,75 +67,66 @@ function UploadFilesComponent({
           return ext === file.type;
         });
       });
-
       if (invalidFiles.length > 0) {
         setError(`Неподдерживаемый тип файлов. Принимаются: ${accept}`);
         return [];
       }
     }
-
-    return selectedFiles;
+    return filesToValidate;
   };
 
   const handleFiles = useCallback((newFiles: FileList | null) => {
     if (!newFiles) return;
-    
     const filesArray = Array.from(newFiles);
     const validFiles = validateFiles(filesArray);
-    
+
     if (validFiles.length > 0) {
+      const processed = validFiles.map(file => {
+        const id = generateFileId(file);
+        return { file, meta: extractMetadata(file, id) };
+      });
+
+      // Регистрируем файлы в глобальном реестре
+      processed.forEach(({ file, meta }) => {
+        fileRegistry.register(meta.id, file);
+      });
+
+      const metadataList = processed.map(p => p.meta);
+
       if (mode === 'replace') {
-        dispatch(setSelectedFiles(validFiles));
+        // При замене очищаем старые из реестра
+        selectedFilesMeta.forEach(meta => fileRegistry.unregister(meta.id));
+        dispatch(setSelectedFiles(metadataList));
       } else {
-        dispatch(addFiles(validFiles));
+        dispatch(addFiles(metadataList));
       }
     }
-  }, [dispatch, maxFiles, accept, maxSize, mode]);
+  }, [dispatch, maxFiles, accept, maxSize, mode, selectedFilesMeta]);
 
   const handleDragEnter = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(true);
+    e.preventDefault(); e.stopPropagation(); setIsDragging(true);
   }, []);
-
   const handleDragLeave = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
+    e.preventDefault(); e.stopPropagation(); setIsDragging(false);
   }, []);
-
   const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
+    e.preventDefault(); e.stopPropagation();
   }, []);
-
   const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
-    
-    const droppedFiles = e.dataTransfer.files;
-    handleFiles(droppedFiles);
+    e.preventDefault(); e.stopPropagation(); setIsDragging(false);
+    handleFiles(e.dataTransfer.files);
   }, [handleFiles]);
 
-  const handleButtonClick = useCallback(() => {
-    fileInputRef.current?.click();
-  }, []);
-
+  const handleButtonClick = useCallback(() => fileInputRef.current?.click(), []);
   const handleFileInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     handleFiles(e.target.files);
-    // Очищаем input, чтобы можно было выбрать те же файлы снова
-    //e.target.value = '';
+    if (e.target.value) e.target.value = '';
   }, [handleFiles]);
-
-  // const handleRemoveFile = useCallback(() => {
-  //   dispatch(clearFiles());
-  // }, [dispatch]);
 
   return (
     <div className="file-upload-container">
-      <div 
-        className={`upload-area-bg ${isDragging ? 'dragging' : ''}`}
+      <div
+        className={`upload-area-bg ${isDragging ? 'dragging' : ''} ${isChecking ? 'disabled' : ''}`}
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragLeave}
         onDragOver={handleDragOver}
@@ -131,15 +139,13 @@ function UploadFilesComponent({
           <path d="M37.3778 27.4929H12.6411V24.5055H37.3778V27.4929Z" fill="#8480B5"></path>
           <path d="M37.3778 16.9905H12.6411V14.0032H37.3778V16.9905Z" fill="#8480B5"></path>
         </svg>
-        
+
         <div className="file-select-btn" onClick={handleButtonClick}>
           <div className="btn-bg">Выбрать файлы</div>
         </div>
-        
-        <p className="drag-drop-text">
-          или перетащите файлы сюда
-        </p>
-        
+
+        <p className="drag-drop-text">или перетащите файлы сюда</p>
+
         <input
           ref={fileInputRef}
           type="file"
@@ -147,11 +153,12 @@ function UploadFilesComponent({
           accept={accept}
           onChange={handleFileInputChange}
           style={{ display: 'none' }}
+          disabled={isChecking}
         />
       </div>
 
       {error && (
-        <div className="error-message">
+        <div className="error-message" role="alert">
           {error}
         </div>
       )}
