@@ -30,5 +30,4 @@ class FileRegistryManager {
   }
 }
 
-// 👇 Экспортируем единственный экземпляр
 export const fileRegistry = new FileRegistryManager();

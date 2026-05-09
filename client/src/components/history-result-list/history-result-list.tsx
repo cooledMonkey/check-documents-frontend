@@ -6,6 +6,7 @@ import { HistoryDivider } from "../history-divider/history-divider";
 import { documentService } from "../../api/document-service";
 import type { HistoryItem } from "../../types/api-types";
 import type { FilterValues } from "../filter-component/filter-component";
+import { DocumentPreviewModal } from "../document-preview-modal/DocumentPreviewModal";
 
 interface HistoryResultsListProps {
   filters: FilterValues;
@@ -26,7 +27,8 @@ function HistoryResultsList({ filters, page, onPageChange }: HistoryResultsListP
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [totalPages, setTotalPages] = useState(0);
-  const [limit] = useState(20);
+  const [limit] = useState(5);
+  const [previewDoc, setPreviewDoc] = useState<{ id: string; name: string } | null>(null);
 
   const backendStatus = filters.status === '' ? undefined :
     filters.status === 'valid' ? 'Изменения не вносились' :
@@ -65,13 +67,9 @@ function HistoryResultsList({ filters, page, onPageChange }: HistoryResultsListP
     });
   };
 
-  const handlePreview = async (documentId: string) => {
-    try {
-      const html = await documentService.getDocumentPreview(documentId);
-      const win = window.open('', '_blank');
-      if (win) { win.document.write(html); win.document.close(); }
-    } catch (err) { console.error('Ошибка просмотра:', err); }
-  };
+  const handlePreview = (documentId: string, fileName: string) => {
+  setPreviewDoc({ id: documentId, name: fileName });
+};
 
   const handleDelete = async (documentId: string) => {
     if (!window.confirm('Удалить документ?')) return;
@@ -81,7 +79,9 @@ function HistoryResultsList({ filters, page, onPageChange }: HistoryResultsListP
     } catch (err) { console.error('Ошибка удаления:', err); }
   };
 
-  if (loading && history.length === 0) return <div className="history-loading">Загрузка истории...</div>;
+  if (loading && history.length === 0) return <div className="file-list-bg">
+        <p className="file-name">Загрузка истории...</p>
+      </div>;
   if (error) return <div className="history-error"><p>⚠️ {error}</p><button onClick={fetchHistory} className="retry-button">Повторить</button></div>;
 
   return (
@@ -95,7 +95,7 @@ function HistoryResultsList({ filters, page, onPageChange }: HistoryResultsListP
                 status={uiStatus}
                 statusLabel={FileStatusLabel[uiStatus]}
                 fileName={`${item.originalName} • ${formatDate(item.uploadedAt)}`}
-                onPreview={() => handlePreview(item.id)}
+                onPreview={() => handlePreview(item.id, item.originalName)} 
                 onDelete={() => handleDelete(item.id)}
               />
               {index < history.length - 1 && <HistoryDivider />}
@@ -114,7 +114,7 @@ function HistoryResultsList({ filters, page, onPageChange }: HistoryResultsListP
             ← Назад
           </button>
           <span className="pagination-info">
-            Страница {page} из {Math.max(0, totalPages - 1)}
+            Страница {page + 1} из {Math.max(0, totalPages)}
           </span>
           <button 
             className="pagination-btn"
@@ -124,6 +124,13 @@ function HistoryResultsList({ filters, page, onPageChange }: HistoryResultsListP
             Вперёд →
           </button>
         </div>
+      )}
+      {previewDoc && (
+        <DocumentPreviewModal 
+          documentId={previewDoc.id} 
+          fileName={previewDoc.name} 
+          onClose={() => setPreviewDoc(null)} 
+        />
       )}
     </>
   );

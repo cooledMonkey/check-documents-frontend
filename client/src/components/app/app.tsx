@@ -12,11 +12,9 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Публичные маршруты */}
         <Route path={AppRoute.Login} element={<LoginPage />} ></Route>
         <Route path={AppRoute.Registration} element={<RegistrationPage />} ></Route>
 
-        {/* Защищённые маршруты */}
         <Route path={AppRoute.Main} element={
             <ProtectedRoute>
               <MainPage />
@@ -40,7 +38,6 @@ function App() {
           } 
         />
         <Route path="*" element={<NotFoundPage/>} />
-        {/* Фолбэк */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

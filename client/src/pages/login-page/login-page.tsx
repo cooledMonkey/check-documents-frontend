@@ -19,7 +19,6 @@ function LoginPage(): JSX.Element {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
         
-        // Убираем ошибку поля при начале ввода
         if (fieldErrors[name]) {
             setFieldErrors(prev => {
                 const newErrors = { ...prev };
@@ -61,7 +60,6 @@ function LoginPage(): JSX.Element {
                 password: formData.password,
             });
             
-            // Сохраняем токены
             if (response.token) {
                 localStorage.setItem('jwt_token', response.token);
                 if (response.refreshToken) {
@@ -69,19 +67,16 @@ function LoginPage(): JSX.Element {
                 }
             }
             
-            // Редирект на главную/дашборд
             navigate('/', { replace: true });
             
         } catch (err) {
             const apiError = err as ApiError;
             
-            // Обработка специфичных кодов из Swagger
             if (apiError.status === 423) {
                 setError('Аккаунт временно заблокирован. Обратитесь в поддержку.');
             } else if (apiError.status === 401) {
                 setError('Неверный email или пароль');
             } else if (apiError.status === 400 && apiError.details) {
-                // Ошибки валидации от бэкенда
                 setFieldErrors(apiError.details);
             } else {
                 setError(apiError.message || 'Ошибка при входе в систему');

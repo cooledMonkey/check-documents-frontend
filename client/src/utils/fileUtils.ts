@@ -1,7 +1,7 @@
 import type { FileMetadata } from "../store/fileSlice";
 
 export const extractFileMetadata = (file: File): FileMetadata => ({
-  id: `${file.name}-${file.size}-${file.lastModified}`, // Простой уникальный ID
+  id: `${file.name}-${file.size}-${file.lastModified}`, 
   name: file.name,
   size: file.size,
   type: file.type,

@@ -18,7 +18,7 @@ interface UploadFilesComponentProps {
 }
 
 function UploadFilesComponent({
-  maxFiles = 5,
+  maxFiles = 10,
   accept = ".xml",
   maxSize = 10 * 1024 * 1024,
   mode = 'append'
@@ -86,7 +86,6 @@ function UploadFilesComponent({
         return { file, meta: extractMetadata(file, id) };
       });
 
-      // Регистрируем файлы в глобальном реестре
       processed.forEach(({ file, meta }) => {
         fileRegistry.register(meta.id, file);
       });
@@ -94,7 +93,6 @@ function UploadFilesComponent({
       const metadataList = processed.map(p => p.meta);
 
       if (mode === 'replace') {
-        // При замене очищаем старые из реестра
         selectedFilesMeta.forEach(meta => fileRegistry.unregister(meta.id));
         dispatch(setSelectedFiles(metadataList));
       } else {

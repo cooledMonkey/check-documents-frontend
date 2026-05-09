@@ -19,7 +19,6 @@ function RegistrationPage(): JSX.Element {
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    // Очищаем ошибку поля при вводе
     if (fieldErrors[name]) {
       setFieldErrors(prev => {
         const newErrors = { ...prev };
@@ -64,23 +63,19 @@ function RegistrationPage(): JSX.Element {
         password: formData.password,
       });
       
-      // 👇 Сохраняем токен
       if (response.token) {
         localStorage.setItem('jwt_token', response.token);
-        // Опционально: если есть refresh token
         if (response.refreshToken) {
           localStorage.setItem('refresh_token', response.refreshToken);
         }
       }
       
-      // Перенаправляем после успешной регистрации
       navigate('/', { replace: true });
       
     } catch (err) {
       const apiError = err as ApiError;
       
       if (apiError.status === 400 && apiError.details) {
-        // Ошибки валидации от бэкенда
         setFieldErrors(apiError.details);
       } else {
         setError(apiError.message || 'Ошибка при регистрации');

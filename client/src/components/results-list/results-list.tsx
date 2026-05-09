@@ -8,12 +8,10 @@ import type { RootState } from "../../store";
 import { useJobResultsWatcher } from "../../hook/useJobResultsWatcher";
 
 function ResultsList(): JSX.Element {
-  // 👇 Запускаем "слушателя" задачи и загрузки отчётов
   const { isChecking } = useJobResultsWatcher();
   
   const uploadedDocuments = useSelector((state: RootState) => state.files.uploadedDocuments);
 
-  // 🟡 Пусто или проверка только началась
   if (uploadedDocuments.length === 0) {
     return (
       <div className="file-list-bg">
@@ -25,7 +23,6 @@ function ResultsList(): JSX.Element {
   return (
     <ul className="file-list-bg">
       {uploadedDocuments.map((doc, index) => {
-        // 🔍 Пока нет отчёта или задача в процессе
         if (!doc.report || isChecking) {
           return (
             <li key={doc.id}>
@@ -40,7 +37,6 @@ function ResultsList(): JSX.Element {
           );
         }
 
-        // ✅ Отчёт готов — маппим в один из 3 статусов
         const uiStatus: FileStatusType = mapBackendStatus(doc.report);
         const statusLabel = FileStatusLabel[uiStatus];
 

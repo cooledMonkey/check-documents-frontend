@@ -2,30 +2,30 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type { VerificationReportResponse } from '../types/api-types';
 
 export interface FileMetadata {
-  id: string;              // Уникальный ID (генерируем сами)
-  name: string;            // Имя файла
-  size: number;            // Размер в байтах
-  type: string;            // MIME-тип
-  lastModified: number;    // Timestamp
+  id: string;
+  name: string;
+  size: number;
+  type: string;
+  lastModified: number;
 }
 export interface FileWithMeta extends FileMetadata {
-  file: File;              // Сам объект File (только в памяти компонента)
+  file: File;
 }
 export interface UploadedDocument {
-  id: string;           // UUID от сервера
-  originalName: string; // Имя файла
+  id: string;  
+  originalName: string; 
   status: 'pending' | 'processing' | 'completed' | 'failed';
-  report?: VerificationReportResponse; // Результат проверки
+  report?: VerificationReportResponse; 
   error?: string;
 }
 
 interface FilesState {
-  selectedFiles: FileMetadata[];              // Файлы, выбранные пользователем
-  uploadedDocuments: UploadedDocument[]; // Загруженные на сервер документы
-  currentJobId: string | null;        // ID текущей задачи проверки
-  isChecking: boolean;                // Идёт ли проверка
-  checkError: string | null;          // Ошибка при проверке
-  uploadProgress: Record<string, number>; // для отслеживания прогресса загрузки
+  selectedFiles: FileMetadata[];            
+  uploadedDocuments: UploadedDocument[]; 
+  currentJobId: string | null;      
+  isChecking: boolean;                
+  checkError: string | null;          
+  uploadProgress: Record<string, number>;
   uploadStatus: Record<string, 'idle' | 'uploading' | 'success' | 'error'>;
 }
 
@@ -65,7 +65,7 @@ const fileSlice = createSlice({
     setUploadStatus: (state, action: PayloadAction<{ fileName: string; status: 'idle' | 'uploading' | 'success' | 'error' }>) => {
       state.uploadStatus[action.payload.fileName] = action.payload.status;
     },
-    // 👇 Новые экшены для проверки
+    
     setUploadedDocuments: (state, action: PayloadAction<UploadedDocument[]>) => {
       state.uploadedDocuments = action.payload;
     },
@@ -105,7 +105,6 @@ const fileSlice = createSlice({
       state.checkError = null;
     })
     .addCase(startFilesCheck.fulfilled, (state, action) => {
-      // 👇 ОСТАВЛЯЕМ true! Хук сам выключит флаг после загрузки отчётов
       state.isChecking = true; 
       state.uploadedDocuments = action.payload.documents;
       state.currentJobId = action.payload.jobIds[0] || null;

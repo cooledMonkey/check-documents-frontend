@@ -12,7 +12,6 @@ function ProtectedRoute({ children }: ProtectedRouteProps): JSX.Element {
   const location = useLocation();
 
   useEffect(() => {
-    // Проверяем токен при монтировании
     const checkAuth = () => {
       const authStatus = authUtils.isAuthenticated();
       setIsAuthenticated(authStatus);
@@ -20,7 +19,6 @@ function ProtectedRoute({ children }: ProtectedRouteProps): JSX.Element {
     checkAuth();
   }, []);
 
-  // Пока проверяем авторизацию — показываем лоадер
   if (isAuthenticated === null) {
     return (
       <div className="auth-loader">
@@ -30,12 +28,10 @@ function ProtectedRoute({ children }: ProtectedRouteProps): JSX.Element {
     );
   }
 
-  // Если не авторизован — редирект на логин с сохранением пути
   if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Авторизован — рендерим дочерние компоненты
   return children;
 }
 

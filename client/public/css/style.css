@@ -129,14 +129,6 @@ body {
   flex-direction: column;
 }
 
-/* .upload-area-border {
-  width: 360.82px;
-  height: 186.91px;
-  border-radius: 10px;
-  background: rgba(217, 217, 217, 0.5);
-  border: 4px dashed #8480b5;
-} */
-
 /* Кнопки */
 .file-select-btn, .clear-btn, .verify-btn {
   filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
@@ -226,6 +218,7 @@ body {
 .file-item {
   display: grid;
   grid-template-columns: 1.5fr 1fr;
+  padding-right: 0px;
 }
 
 .history-file-item {
@@ -239,6 +232,7 @@ body {
   font-size: 18px;
   text-align: left;
   color: #797979;
+  margin-right: 35px;
 }
 
 /* Бейджи статусов - альтернативный вариант */
@@ -729,15 +723,6 @@ body {
   border-radius: 8px;
 }
 
-/* .profile-nav-btn .dropdown-arrow {
-  transition: transform 0.2s;
-  margin-left: 4px;
-}
-
-.profile-nav-btn .dropdown-arrow.open {
-  transform: rotate(180deg);
-} */
-
 /* Выпадающее меню для нав-бара */
 .profile-dropdown.nav-dropdown {
   position: absolute;
@@ -774,7 +759,6 @@ body {
   background: none;
   border: none;
   border-radius: 8px;
-  /* color: #333; */
   font-size: 14px;
   cursor: pointer;
   text-align: left;
@@ -863,14 +847,6 @@ body {
   padding: 12px 16px;
 }
 
-/* .history-file-item .file-name {
-  flex: 1;
-  margin: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-} */
-
 /* Адаптив для мобильных */
 @media (max-width: 600px) {
   .history-file-item {
@@ -880,4 +856,272 @@ body {
   .history-file-item .file-name {
     flex: 1 1 100%;
   }
+}
+
+.history-loading,
+.history-error {
+  padding: 24px;
+  text-align: center;
+  color: #666;
+  background: #f9f9fc;
+  border-radius: 8px;
+}
+
+.history-error {
+  color: #c62828;
+  background: #ffebee;
+  border: 1px solid #ffcdd2;
+}
+
+.retry-button {
+  margin-top: 12px;
+  padding: 8px 16px;
+  background: #7570AE;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.retry-button:hover {
+  background: #635f99;
+}
+
+/* Пагинация */
+.history-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+  padding: 12px;
+}
+
+.pagination-btn {
+  padding: 8px 16px;
+  background: #fff;
+  border: 1px solid #7570AE;
+  color: #7570AE;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: #7570AE;
+  color: white;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-color: #ccc;
+  color: #999;
+}
+
+.pagination-info {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+}
+
+/* Оверлей */
+.preview-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 15, 25, 0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Контейнер */
+.preview-modal-content {
+  background: #fff;
+  width: 90vw;
+  max-width: 1200px;
+  height: 85vh;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  animation: slideUp 0.25s ease-out;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Шапка */
+.preview-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.preview-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #2d3748;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 80%;
+}
+
+.preview-close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #718096;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.preview-close-btn:hover {
+  background: #e2e8f0;
+  color: #2d3748;
+}
+
+/* Тело */
+.preview-modal-body {
+  flex: 1;
+  position: relative;
+  background: #f1f5f9;
+}
+
+.preview-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: #fff;
+}
+
+/* Состояния загрузки/ошибки */
+.preview-state {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: #64748b;
+  font-size: 15px;
+}
+
+.preview-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #e2e8f0;
+  border-top-color: #7570ae;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.preview-error {
+  color: #ef4444;
+  background: #fef2f2;
+  padding: 16px 24px;
+  border-radius: 8px;
+  border: 1px solid #fecaca;
+}
+
+/* Адаптив */
+@media (max-width: 768px) {
+  .preview-modal-content { width: 95vw; height: 90vh; border-radius: 12px; }
+  .preview-title { font-size: 16px; }
+}
+
+/*  Исправление для длинных имён файлов */
+.history-file-item .file-name .selected-files-bg {
+  white-space: normal;          /* Разрешаем перенос строк */
+  overflow-wrap: break-word;    /* Разрешаем разрывать длинные слова */
+  word-break: break-word;       /* Фоллбэк для старых браузеров */
+  min-width: 0;                 /* 🔑 Ключевое: разрешаем flex-элементу сжиматься */
+  flex: 1 1 auto;               /* Занимает доступное место, но не распирает родителя */
+}
+
+.history-file-item .selected-file .selected-files-bg {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;                 /* Иногда нужно и на родителе */
+}
+
+/* Контейнер списка */
+.selected-files-bg{
+  width: 100%;
+  min-width: 0; /* 🔑 Разрешаем flex-контейнеру сжиматься под родителя */
+  padding: 10px;
+  margin: 0;
+  list-style: none;
+}
+
+/* Элемент с именем файла */
+.selected-file{
+  min-width: 0; /* 🔑 Самая важная строка: отменяет default flex-min-width: auto */
+  overflow-wrap: break-word; /* Переносит "слипшиеся" длинные слова */
+  word-break: break-word; /* Фоллбэк для Safari и старых браузеров */
+  white-space: normal; /* Разрешает многострочный текст */
+  
+  /* Опционально: если .selected-file внутри другого flex-блока */
+  flex: 1 1 auto;
+}
+
+/* Контейнер списка */
+.file-list-bg .file-item{
+  width: 100%;
+  min-width: 0; /* 🔑 Разрешаем flex-контейнеру сжиматься под родителя */
+  padding: 10px;
+  padding-right: -5px;
+  margin: 0;
+  list-style: none;
+}
+
+/* Элемент с именем файла */
+.file-item{
+  min-width: 0; /* 🔑 Самая важная строка: отменяет default flex-min-width: auto */
+  overflow-wrap: break-word; /* Переносит "слипшиеся" длинные слова */
+  word-break: break-word; /* Фоллбэк для Safari и старых браузеров */
+  white-space: normal; /* Разрешает многострочный текст */
+  
+  /* Опционально: если .selected-file внутри другого flex-блока */
+  flex: 1 1 auto;
+}
+
+/* 🔧 Исправление для длинных имён файлов */
+.history-file-item .file-name {
+  white-space: normal;          /* Разрешаем перенос строк */
+  overflow-wrap: break-word;    /* Разрешаем разрывать длинные слова */
+  word-break: break-word;       /* Фоллбэк для старых браузеров */
+  min-width: 0;                 /* 🔑 Ключевое: разрешаем flex-элементу сжиматься */
+  flex: 1 1 auto;               /* Занимает доступное место, но не распирает родителя */
+}
+
+/* Если .history-file-item использует flex, убедись, что у него тоже есть: */
+.history-file-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;                 /* Иногда нужно и на родителе */
 }

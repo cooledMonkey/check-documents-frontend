@@ -1,7 +1,7 @@
 export interface RegistrationRequest {
-  fullName: string;      // ФИО
-  email: string;         // Почта
-  password: string;      // Пароль
+  fullName: string;   
+  email: string;     
+  password: string;     
 }
 
 export interface LoginRequest {
@@ -15,9 +15,9 @@ export interface ChangePasswordRequest {
 }
 
 export interface JwtAuthenticationResponse {
-  token: string;         // JWT токен
-  refreshToken?: string; // Опционально, если есть рефреш
-  expiresIn?: number;    // Время жизни в секундах
+  token: string;     
+  refreshToken?: string; 
+  expiresIn?: number;  
 }
 
 export interface UserLockedResponse {
@@ -28,5 +28,5 @@ export interface UserLockedResponse {
 export interface ApiError {
   status: number;
   message: string;
-  details?: Record<string, string[]>; // Для валидации полей
+  details?: Record<string, string[]>; 
 }

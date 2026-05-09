@@ -48,7 +48,6 @@ function FilterComponent({ onApply, initialFilters = {} }: FilterComponentProps)
           <label className="filter-label">Статус</label>
           <div className="status-options">
             {statuses.map((s) => (
-              // 👇 Заменяем <label> на <div>. Убираем нативный radio, который блокирует снятие галочки
               <div
                 key={s.id}
                 className={`status-option ${status === s.id ? 'active' : ''}`}

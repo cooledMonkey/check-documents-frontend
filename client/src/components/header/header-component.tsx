@@ -12,7 +12,6 @@ function HeaderComponent(): JSX.Element {
   const menuRef = useRef<HTMLDivElement>(null);
   const profileBtnRef = useRef<HTMLButtonElement>(null);
 
-  // 👇 Закрытие меню при клике вне
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -28,7 +27,6 @@ function HeaderComponent(): JSX.Element {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // 👇 Закрытие меню по Escape
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setIsMenuOpen(false);
@@ -95,28 +93,6 @@ function HeaderComponent(): JSX.Element {
               </defs>
             </svg>
           </div>
-
-          {/* 👇 Профиль — только отображение (не кликабельно)
-          <div className="profile-container">
-            <svg className="profile-icon" width="75" height="75" viewBox="0 0 75 75" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <g filter="url(#filter0_d_13_445)">
-                <circle cx="37.5" cy="33.5" r="33.5" fill="#D9D9D9"></circle>
-              </g>
-              <defs>
-                <filter id="filter0_d_13_445" x="0" y="0" width="75" height="75" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-                  <feFlood flood-opacity="0" result="BackgroundImageFix"></feFlood>
-                  <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"></feColorMatrix>
-                  <feOffset dy="4"></feOffset>
-                  <feGaussianBlur stdDeviation="2"></feGaussianBlur>
-                  <feComposite in2="hardAlpha" operator="out"></feComposite>
-                  <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.15 0"></feColorMatrix>
-                  <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_13_445"></feBlend>
-                  <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_13_445" result="shape"></feBlend>
-                </filter>
-              </defs>
-            </svg>
-            <p className="username">best_hr_43</p>
-          </div> */}
         </div>
       </div>
 
@@ -131,7 +107,6 @@ function HeaderComponent(): JSX.Element {
         <Link to="/" style={{ textDecoration: 'none' }} className="nav-button-bg btn-1">Проверка</Link>
         <Link to="/history" style={{ textDecoration: 'none' }} className="nav-button-bg btn-2">История</Link>
         
-        {/* 👇 Кнопка «Профиль» с выпадающим меню */}
         <div className="profile-nav-wrapper" ref={menuRef}>
           <button 
             ref={profileBtnRef}
@@ -144,7 +119,6 @@ function HeaderComponent(): JSX.Element {
             Профиль
           </button>
 
-          {/* 👇 Выпадающее меню */}
           {isMenuOpen && (
             <div className="profile-dropdown nav-dropdown" role="menu">
               <button 

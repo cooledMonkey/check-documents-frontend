@@ -11,11 +11,6 @@ import type {
 } from '../types/api-types';
 
 export const documentService = {
-  /**
-   * Загрузка XML-документов (multipart/form-data)
-   * Swagger указывает "in: query", но для файлов это технически невозможно.
-   * Реализовано через FormData — стандартный способ.
-   */
   uploadFiles: async (files: File[]): Promise<UploadFilesResponse> => {
     const formData = new FormData();
     files.forEach(file => formData.append('file', file));
@@ -26,20 +21,17 @@ export const documentService = {
     return response.data;
   },
 
-  /** Запуск проверки документов по их ID */
   startCheck: async (documentIds: string[]): Promise<JobIdResponse> => {
     const payload: DocumentIdRequest = { document_ids: documentIds };
     const response = await apiClient.post<JobIdResponse>('/v1/jobs', payload);
     return response.data;
   },
 
-  /** Получение статуса задачи (или массива задач) */
   getJobStatus: async (jobId: string): Promise<JobStatusResponse> => {
     const response = await apiClient.get<JobStatusResponse>(`/v1/jobs/${jobId}`);
     return response.data;
   },
 
-  /** Получение верификационного отчёта */
   getVerificationReport: async (documentId: string): Promise<VerificationReportResponse> => {
     const response = await apiClient.get<VerificationReportResponse>(
       `/v1/documents/${documentId}/report`
@@ -48,7 +40,6 @@ export const documentService = {
   },
 
 
-  /** Получение истории документов (с пагинацией) */
     getDocumentHistory: async (params: {
     page: number;
     limit: number;
@@ -57,12 +48,11 @@ export const documentService = {
     search?: string;
   }): Promise<DocumentHistoryResponse> => {
     const response = await apiClient.get<DocumentHistoryResponse>('/v1/documents', {
-      params, // 👈 Axios автоматически превратит объект в ?page=1&limit=20&sortByDate=...
+      params, 
     });
     return response.data;
   },
 
-  /** Получение уведомлений пользователя */
   getNotifications: async (): Promise<NotificationResponse> => {
     const response = await apiClient.get<NotificationResponse>('/v1/notifications');
     return response.data;
@@ -75,7 +65,6 @@ export const documentService = {
     return response.data;
   },
 
-  /** Получение HTML-превью документа */
   getDocumentPreview: async (documentId: string): Promise<string> => {
     const response = await apiClient.get(`/v1/documents/${documentId}/preview`, {
       responseType: 'text',
@@ -83,14 +72,7 @@ export const documentService = {
     return response.data;
   },
 
-  /** Удаление документа */
   deleteDocument: async (documentId: string): Promise<void> => {
     await apiClient.delete(`/v1/documents/${documentId}`);
   },
-
-//   /** Получение профиля текущего пользователя */
-//   getProfile: async (): Promise<UserProfileRespon> => {
-//     const response = await apiClient.get<UserProfileResponse>('/v1/users/me');
-//     return response.data;
-//   },
 };

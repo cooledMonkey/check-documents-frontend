@@ -6,19 +6,27 @@ export const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true, // Если бэкенд использует httpOnly cookies
+  withCredentials: true,
 });
 
-// 👇 Добавляем токен к запросам
+const PUBLIC_ENDPOINTS = [
+  '/v1/auth/registration',
+  '/v1/auth/login',
+];
+
 apiClient.interceptors.request.use((config) => {
   const token = localStorage.getItem('jwt_token');
-  if (token && config.headers) {
+  
+  const isPublicEndpoint = PUBLIC_ENDPOINTS.some(path => 
+    config.url?.includes(path)
+  );
+  
+  if (token && config.headers && !isPublicEndpoint) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
 
-// 👇 Глобальная обработка ошибок
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {

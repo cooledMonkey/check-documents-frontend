@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useAppSelector } from "../../store/hooks";
 import { clearFiles, setIsChecking, setCheckError } from "../../store/fileSlice";
-import { startFilesCheck } from "../../store/fileThunks"; // 👈 импортируем thunk
+import { startFilesCheck } from "../../store/fileThunks";
 import type { RootState } from "../../store";
 import type { FileMetadata } from "../../store/fileSlice";
 
@@ -17,11 +17,9 @@ function UploadedFilesList(): JSX.Element {
         dispatch(clearFiles());
     }, [dispatch, selectedFiles.length]);
 
-    // 👇 Обработчик кнопки "Проверка"
     const handleCheckFiles = useCallback(async () => {
         if (selectedFiles.length === 0) return;
         
-        // 👇 Диспатчим thunk — вся логика проверки внутри
         const result = await dispatch(startFilesCheck());
         
         if (startFilesCheck.rejected.match(result)) {
@@ -29,7 +27,6 @@ function UploadedFilesList(): JSX.Element {
             dispatch(setCheckError(result.payload || 'Ошибка проверки'));
             dispatch(setIsChecking(false));
         }
-        // При успехе thunk сам обновит стейт (uploadedDocuments, currentJobId)
     }, [dispatch, selectedFiles.length]);
 
     return (
@@ -43,7 +40,6 @@ function UploadedFilesList(): JSX.Element {
             </ul>
             
             <div className="two-buttons-class">
-                {/* 👇 Кнопка "Проверка" с обработчиком и disabled-состоянием */}
                 <div 
                     className={`verify-btn${selectedFiles.length === 0 || isChecking ? ' disabled' : ''}`}
                     onClick={handleCheckFiles}

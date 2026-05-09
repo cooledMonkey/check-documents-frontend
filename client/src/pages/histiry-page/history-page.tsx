@@ -3,7 +3,6 @@ import { useState, useCallback } from "react";
 import { FilterComponent, type FilterValues } from "../../components/filter-component/filter-component";
 import { HeaderComponent } from "../../components/header/header-component";
 import { HistoryResultsList } from "../../components/history-result-list/history-result-list";
-// 👇 Проверь путь до своего HeaderComponent
 
 function HistoryPage(): JSX.Element {
   const [filters, setFilters] = useState<FilterValues>({
@@ -13,7 +12,6 @@ function HistoryPage(): JSX.Element {
   });
   const [page, setPage] = useState(0);
 
-  // При применении фильтров сбрасываем страницу на 0
   const handleFilterApply = useCallback((newFilters: FilterValues) => {
     setFilters(newFilters);
     setPage(0);
@@ -33,15 +31,3 @@ function HistoryPage(): JSX.Element {
 }
 
 export { HistoryPage };
-
-    // return(<div>
-    //   <HeaderComponent/>
-    //   <section className="content-container">
-    // <div className="file-list-container">
-    // <HistoryResultsList></HistoryResultsList>
-    // <div className="clear-btn">
-    //     <div className="btn-bg">Очистить</div>
-    //   </div> 
-    // </div>
-    // <FilterComponent></FilterComponent>
-    // </section></div>);

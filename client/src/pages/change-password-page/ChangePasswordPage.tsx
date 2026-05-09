@@ -50,10 +50,7 @@ function ChangePasswordPage(): JSX.Element {
       });
       setSuccess(true);
       setTimeout(() => {
-        // Опционально: разлогинить после смены пароля
-        // authUtils.logout();
-        // navigate('/login', { replace: true });
-        navigate(-1); // Вернуться назад
+        navigate(-1);
       }, 1500);
     } catch (err) {
       const apiError = err as ApiError;

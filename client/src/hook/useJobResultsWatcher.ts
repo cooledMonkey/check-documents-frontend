@@ -12,13 +12,11 @@ export function useJobResultsWatcher() {
   const uploadedDocuments = useSelector((state: RootState) => state.files.uploadedDocuments);
 
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const isFetchingRef = useRef(false); // Защита от concurrent-запросов
+  const isFetchingRef = useRef(false); 
 
   useEffect(() => {
-    // Если jobId нет или уже проверяем — выходим
     if (!currentJobId || isFetchingRef.current) return;
 
-    // Запускаем поллинг каждые 2 секунды
     pollRef.current = setInterval(async () => {
       if (isFetchingRef.current) return;
       isFetchingRef.current = true;
@@ -27,12 +25,10 @@ export function useJobResultsWatcher() {
         const jobStatus: JobStatusResponse = await documentService.getJobStatus(currentJobId);
 
         if (jobStatus.status === 'completed') {
-          // ✅ Задача завершена → останавливаем поллинг
           if (pollRef.current) clearInterval(pollRef.current);
           
-          // Загружаем отчёты для каждого документа
           for (const doc of uploadedDocuments) {
-            if (doc.report) continue; // Уже есть отчёт
+            if (doc.report) continue; 
             try {
               const report = await documentService.getVerificationReport(doc.id);
               dispatch(updateDocumentStatus({
@@ -48,10 +44,9 @@ export function useJobResultsWatcher() {
               }));
             }
           }
-          dispatch(setIsChecking(false)); // Только теперь выключаем флаг
+          dispatch(setIsChecking(false)); 
           
         } else if (jobStatus.status === 'failed') {
-          // ❌ Ошибка на сервере
           if (pollRef.current) clearInterval(pollRef.current);
           dispatch(setCheckError('Проверка завершилась с ошибкой на сервере'));
           dispatch(setIsChecking(false));
@@ -63,7 +58,6 @@ export function useJobResultsWatcher() {
       }
     }, 2000);
 
-    // Очистка при размонтировании или смене jobId
     return () => {
       if (pollRef.current) clearInterval(pollRef.current);
       pollRef.current = null;
