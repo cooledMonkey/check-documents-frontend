@@ -48,10 +48,19 @@ function ChangePasswordPage(): JSX.Element {
         oldPassword: formData.oldPassword,
         newPassword: formData.newPassword,
       });
+      
+      localStorage.removeItem('jwt_token');
+      localStorage.removeItem('refresh_token');
+      
       setSuccess(true);
+      
       setTimeout(() => {
-        navigate(-1);
+        navigate('/login', { 
+          replace: true,
+          state: { message: 'Пароль успешно изменён. Пожалуйста, войдите заново.' }
+        });
       }, 1500);
+      
     } catch (err) {
       const apiError = err as ApiError;
       if (apiError.status === 401) {
@@ -70,7 +79,7 @@ function ChangePasswordPage(): JSX.Element {
         <div className="login-container">
           <div className="login-content" style={{ textAlign: 'center' }}>
             <p className="filters-title" style={{ color: '#4caf50' }}>✓ Пароль изменён</p>
-            <p className="login-text">Перенаправляем...</p>
+            <p className="login-text">Перенаправляем на страницу входа...</p>
           </div>
         </div>
       </div>

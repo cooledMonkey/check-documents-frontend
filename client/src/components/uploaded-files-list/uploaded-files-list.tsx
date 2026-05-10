@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useAppSelector } from "../../store/hooks";
 import { clearFiles, setIsChecking, setCheckError } from "../../store/fileSlice";
 import { startFilesCheck } from "../../store/fileThunks";
+import { fileRegistry } from "../../utils/fileRegistry";
 import type { RootState } from "../../store";
 import type { FileMetadata } from "../../store/fileSlice";
 
@@ -14,20 +15,23 @@ function UploadedFilesList(): JSX.Element {
     
     const handleClearFiles = useCallback(() => {
         if (selectedFiles.length === 0) return;
+        selectedFiles.forEach(meta => fileRegistry.unregister(meta.id));
         dispatch(clearFiles());
-    }, [dispatch, selectedFiles.length]);
+    }, [dispatch, selectedFiles]);
 
     const handleCheckFiles = useCallback(async () => {
         if (selectedFiles.length === 0) return;
         
         const result = await dispatch(startFilesCheck());
         
-        if (startFilesCheck.rejected.match(result)) {
-            // Обработка ошибки
+        if (startFilesCheck.fulfilled.match(result)) {
+            selectedFiles.forEach(meta => fileRegistry.unregister(meta.id));
+            dispatch(clearFiles());
+        } else if (startFilesCheck.rejected.match(result)) {
             dispatch(setCheckError(result.payload || 'Ошибка проверки'));
             dispatch(setIsChecking(false));
         }
-    }, [dispatch, selectedFiles.length]);
+    }, [dispatch, selectedFiles]);
 
     return (
         <div className="selected-files-container">

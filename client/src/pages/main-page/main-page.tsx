@@ -9,9 +9,6 @@ function MainPage(): JSX.Element {
     <main className="content-container">
     <div className="file-list-container">
     <ResultsList></ResultsList>
-    <div className="clear-btn">
-        <div className="btn-bg">Очистить</div>
-      </div>
     </div>
     <UploadFilesComponent/>
     <UploadedFilesList></UploadedFilesList>
